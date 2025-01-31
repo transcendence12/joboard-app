@@ -82,7 +82,8 @@
    font-family: Poppins;
    font-weight: 400;
 
-   &:hover {
+   &:hover,
+   &.selected {
       background-color: var(--Gray-lightest);
    }
 }

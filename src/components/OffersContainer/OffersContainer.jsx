@@ -7,14 +7,14 @@ import { useDebounce } from '../../hooks/useDebounce';
 
 export const OffersContainer = () => {
    const [searchValue, setSearchValue] = useState('');
-   // const [locationValue, setLocationValue] = useState('');
+   const [locationValue, setLocationValue] = useState('');
    const [offers, setOffers] = useState([]);
    const [filteredOffers, setFilteredOffers] = useState([]);
    const [isLoading, setIsLoading] = useState(true);
    const [error, setError] = useState(null);
 
    const filterOffers = useCallback(
-      (search) => {
+      (search, location) => {
          let filtered = offers;
 
          if (search) {
@@ -23,12 +23,26 @@ export const OffersContainer = () => {
             );
          }
 
-         // if (location) {
-         //    filtered = filtered.filter(offer =>
-         //       offer.city.toLowerCase().includes(location.toLowerCase()) ||
-         //       offer.country.toLowerCase().includes(location.toLowerCase())
-         //    );
-         // }
+         if (location) {
+            // Split location into city and country if it contains a comma
+            const [searchCity, searchCountry] = location.split(',').map(str => str.trim());
+            
+            filtered = filtered.filter((offer) => {
+               if (searchCountry) {
+                  // If both city and country are provided
+                  return (
+                     offer.city.toLowerCase().includes(searchCity.toLowerCase()) &&
+                     offer.country.toLowerCase().includes(searchCountry.toLowerCase())
+                  );
+               } else {
+                  // If only city is provided
+                  return (
+                     offer.city.toLowerCase().includes(location.toLowerCase()) ||
+                     offer.country.toLowerCase().includes(location.toLowerCase())
+                  );
+               }
+            });
+         }
 
          setFilteredOffers(filtered);
       },
@@ -40,13 +54,13 @@ export const OffersContainer = () => {
 
    const handleSearchChange = (value) => {
       setSearchValue(value);
-      debouncedFilterOffers(value);
+      debouncedFilterOffers(value, locationValue);
    };
 
-   // const handleLocationChange = (value) => {
-   //    setLocationValue(value);
-   //    filterOffers(searchValue, value);
-   // };
+   const handleLocationChange = (value) => {
+      setLocationValue(value);
+      debouncedFilterOffers(searchValue, value);
+   };
 
    useEffect(() => {
       const fetchJobs = async () => {
@@ -114,13 +128,14 @@ export const OffersContainer = () => {
                value={searchValue}
                setValue={setSearchValue}
             />
-            {/* <Input 
+            <Input
                type="location"
                placeholder="Search location"
+               offers={offers}
                onSearchChange={handleLocationChange}
                value={locationValue}
                setValue={setLocationValue}
-            /> */}
+            />
          </div>
          <OffersList offers={filteredOffers} isLoading={isLoading} error={error} />
       </div>
