@@ -24,18 +24,15 @@ export const OffersContainer = () => {
          }
 
          if (location) {
-            // Split location into city and country if it contains a comma
-            const [searchCity, searchCountry] = location.split(',').map(str => str.trim());
-            
+            const [searchCity, searchCountry] = location.split(',').map((str) => str.trim());
+
             filtered = filtered.filter((offer) => {
                if (searchCountry) {
-                  // If both city and country are provided
                   return (
                      offer.city.toLowerCase().includes(searchCity.toLowerCase()) &&
                      offer.country.toLowerCase().includes(searchCountry.toLowerCase())
                   );
                } else {
-                  // If only city is provided
                   return (
                      offer.city.toLowerCase().includes(location.toLowerCase()) ||
                      offer.country.toLowerCase().includes(location.toLowerCase())
@@ -49,18 +46,32 @@ export const OffersContainer = () => {
       [offers],
    );
 
-   // Debounce the filter function with 300ms delay
+   // Create a single debounced function that handles both values
    const debouncedFilterOffers = useDebounce(filterOffers, 300);
 
-   const handleSearchChange = (value) => {
-      setSearchValue(value);
-      debouncedFilterOffers(value, locationValue);
-   };
+   // Update both search handlers to use the current values
+   const handleSearchChange = useCallback(
+      (value) => {
+         setSearchValue(value);
+         debouncedFilterOffers(value, locationValue);
+      },
+      [debouncedFilterOffers, locationValue], // Include locationValue in dependencies
+   );
 
-   const handleLocationChange = (value) => {
-      setLocationValue(value);
-      debouncedFilterOffers(searchValue, value);
-   };
+   const handleLocationChange = useCallback(
+      (value) => {
+         setLocationValue(value);
+         debouncedFilterOffers(searchValue, value);
+      },
+      [debouncedFilterOffers, searchValue], // Include searchValue in dependencies
+   );
+
+   // Apply filters whenever offers data changes
+   useEffect(() => {
+      if (offers.length > 0) {
+         filterOffers(searchValue, locationValue);
+      }
+   }, [offers, filterOffers, searchValue, locationValue]);
 
    useEffect(() => {
       const fetchJobs = async () => {
@@ -121,6 +132,7 @@ export const OffersContainer = () => {
       <div className={styles.container}>
          <div className={styles.inputWrapper}>
             <Input
+               key="search-input"
                type="search"
                placeholder="Search for"
                offers={offers}
@@ -129,6 +141,7 @@ export const OffersContainer = () => {
                setValue={setSearchValue}
             />
             <Input
+               key="location-input"
                type="location"
                placeholder="Search location"
                offers={offers}

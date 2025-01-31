@@ -44,13 +44,13 @@ export const Input = ({
          return locations
             .filter((location) => {
                const searchLower = value.toLowerCase();
-               const [city, country] = location.toLowerCase().split(',').map(str => str.trim());
-               
+               const [city, country] = location
+                  .toLowerCase()
+                  .split(',')
+                  .map((str) => str.trim());
+
                // Check if searching for city or full location
-               return (
-                  city.includes(searchLower) || 
-                  location.toLowerCase().includes(searchLower)
-               );
+               return city.includes(searchLower) || location.toLowerCase().includes(searchLower);
             })
             .slice(0, 5);
       }
@@ -115,9 +115,7 @@ export const Input = ({
          case 'ArrowDown':
             e.preventDefault();
             setShowSuggestions(true);
-            setSelectedIndex((prev) => 
-               prev < suggestions.length - 1 ? prev + 1 : prev
-            );
+            setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : prev));
             break;
 
          case 'ArrowUp':
