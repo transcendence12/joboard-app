@@ -15,28 +15,58 @@ export const OffersContainer = () => {
    useEffect(() => {
       const fetchJobs = async () => {
          try {
+            setIsLoading(true);
+            setError(null);
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
             const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.OFFERS}`, {
                headers: {
                   'Content-Type': 'application/json',
                },
+               signal: controller.signal,
             });
 
+            clearTimeout(timeoutId);
+
             if (!response.ok) {
-               throw new Error('Failed to fetch offers');
+               throw new Error(
+                  `Failed to fetch offers (${response.status} ${response.statusText})`
+               );
             }
 
             const data = await response.json();
+
+            if (!Array.isArray(data)) {
+               throw new Error('Invalid data format received from server');
+            }
+
             setOffers(data);
             setFilteredOffers(data);
          } catch (error) {
             console.error('Error fetching offers:', error);
-            setError(error.message);
+            if (error.name === 'AbortError') {
+               setError('Request timed out. Please check your connection and try again.');
+            } else if (!navigator.onLine) {
+               setError('No internet connection. Please check your network and try again.');
+            } else {
+               setError(
+                  error.message || 'Failed to fetch offers. Please try again later.'
+               );
+            }
          } finally {
             setIsLoading(false);
          }
       };
 
       fetchJobs();
+
+      // Cleanup function
+      return () => {
+         setOffers([]);
+         setFilteredOffers([]);
+      };
    }, []);
 
    const handleSearchChange = (value) => {
@@ -53,8 +83,8 @@ export const OffersContainer = () => {
       let filtered = offers;
 
       if (search) {
-         filtered = filtered.filter(offer =>
-            offer.title.toLowerCase().includes(search.toLowerCase())
+         filtered = filtered.filter((offer) =>
+            offer.title.toLowerCase().includes(search.toLowerCase()),
          );
       }
 
@@ -71,7 +101,7 @@ export const OffersContainer = () => {
    return (
       <div className={styles.container}>
          <div className={styles.inputWrapper}>
-            <Input 
+            <Input
                type="search"
                placeholder="Search for"
                offers={offers}
@@ -87,11 +117,7 @@ export const OffersContainer = () => {
                setValue={setLocationValue}
             /> */}
          </div>
-         <OffersList 
-            offers={filteredOffers}
-            isLoading={isLoading}
-            error={error}
-         />
+         <OffersList offers={filteredOffers} isLoading={isLoading} error={error} />
       </div>
    );
 };

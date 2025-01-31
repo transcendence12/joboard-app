@@ -3,13 +3,13 @@ import styles from './Input.module.scss';
 import { SearchIcon } from '../../Icons/SearchIcon';
 import { LocationIcon } from '../../Icons/LocationIcon';
 
-export const Input = ({ 
-   type = 'search', 
+export const Input = ({
+   type = 'search',
    placeholder = 'Search for',
    offers = [],
    onSearchChange,
    value,
-   setValue
+   setValue,
 }) => {
    const [showSuggestions, setShowSuggestions] = useState(false);
    const [suggestions, setSuggestions] = useState([]);
@@ -18,14 +18,15 @@ export const Input = ({
    const handleInputChange = (e) => {
       const inputValue = e.target.value;
       setValue(inputValue);
-      
+
       if (type === 'search') {
          // Get unique job titles that match the input
          const matchingSuggestions = offers
-            .map(offer => offer.title)
-            .filter((title, index, self) => 
-               self.indexOf(title) === index && // Remove duplicates
-               title.toLowerCase().includes(inputValue.toLowerCase())
+            .map((offer) => offer.title)
+            .filter(
+               (title, index, self) =>
+                  self.indexOf(title) === index && // Remove duplicates
+                  title.toLowerCase().includes(inputValue.toLowerCase()),
             )
             .slice(0, 5); // Limit to 5 suggestions
 

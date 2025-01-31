@@ -1,7 +1,7 @@
 export const SearchIcon = () => {
    return (
       <svg
-        //  className={props.className}
+         //  className={props.className}
          width="30"
          height="30"
          viewBox="0 0 30 30"
