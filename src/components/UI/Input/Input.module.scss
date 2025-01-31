@@ -70,6 +70,7 @@
    z-index: 10;
    margin-top: 4px;
    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+   text-align: left;
 }
 
 .suggestionItem {
@@ -77,6 +78,9 @@
    cursor: pointer;
    color: var(--Gray-dark);
    font-size: 14px;
+   text-align: left;
+   font-family: Poppins;
+   font-weight: 400;
 
    &:hover {
       background-color: var(--Gray-lightest);

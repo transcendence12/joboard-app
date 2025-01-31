@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import * as styles from './OffersContainer.module.scss';
 import { OffersList } from './OffersList/OffersList';
 import { Input } from '../UI/Input/Input';
 import { API_CONFIG } from '../../config/api';
+import { useDebounce } from '../../hooks/useDebounce';
 
 export const OffersContainer = () => {
    const [searchValue, setSearchValue] = useState('');
@@ -11,6 +12,38 @@ export const OffersContainer = () => {
    const [filteredOffers, setFilteredOffers] = useState([]);
    const [isLoading, setIsLoading] = useState(true);
    const [error, setError] = useState(null);
+
+   const filterOffers = useCallback((search) => {
+      let filtered = offers;
+
+      if (search) {
+         filtered = filtered.filter((offer) =>
+            offer.title.toLowerCase().includes(search.toLowerCase()),
+         );
+      }
+
+      // if (location) {
+      //    filtered = filtered.filter(offer =>
+      //       offer.city.toLowerCase().includes(location.toLowerCase()) ||
+      //       offer.country.toLowerCase().includes(location.toLowerCase())
+      //    );
+      // }
+
+      setFilteredOffers(filtered);
+   }, [offers]);
+
+   // Debounce the filter function with 300ms delay
+   const debouncedFilterOffers = useDebounce(filterOffers, 300);
+
+   const handleSearchChange = (value) => {
+      setSearchValue(value);
+      debouncedFilterOffers(value);
+   };
+
+   // const handleLocationChange = (value) => {
+   //    setLocationValue(value);
+   //    filterOffers(searchValue, value);
+   // };
 
    useEffect(() => {
       const fetchJobs = async () => {
@@ -32,7 +65,7 @@ export const OffersContainer = () => {
 
             if (!response.ok) {
                throw new Error(
-                  `Failed to fetch offers (${response.status} ${response.statusText})`
+                  `Failed to fetch offers (${response.status} ${response.statusText})`,
                );
             }
 
@@ -51,9 +84,7 @@ export const OffersContainer = () => {
             } else if (!navigator.onLine) {
                setError('No internet connection. Please check your network and try again.');
             } else {
-               setError(
-                  error.message || 'Failed to fetch offers. Please try again later.'
-               );
+               setError(error.message || 'Failed to fetch offers. Please try again later.');
             }
          } finally {
             setIsLoading(false);
@@ -68,35 +99,6 @@ export const OffersContainer = () => {
          setFilteredOffers([]);
       };
    }, []);
-
-   const handleSearchChange = (value) => {
-      setSearchValue(value);
-      filterOffers(value);
-   };
-
-   // const handleLocationChange = (value) => {
-   //    setLocationValue(value);
-   //    filterOffers(searchValue, value);
-   // };
-
-   const filterOffers = (search) => {
-      let filtered = offers;
-
-      if (search) {
-         filtered = filtered.filter((offer) =>
-            offer.title.toLowerCase().includes(search.toLowerCase()),
-         );
-      }
-
-      // if (location) {
-      //    filtered = filtered.filter(offer =>
-      //       offer.city.toLowerCase().includes(location.toLowerCase()) ||
-      //       offer.country.toLowerCase().includes(location.toLowerCase())
-      //    );
-      // }
-
-      setFilteredOffers(filtered);
-   };
 
    return (
       <div className={styles.container}>
