@@ -17,12 +17,13 @@ export const Input = ({
    // Memoize suggestions calculation
    const suggestions = useMemo(() => {
       if (!value || type !== 'search') return [];
-      
+
       return offers
-         .map(offer => offer.title)
-         .filter((title, index, self) => 
-            self.indexOf(title) === index && // Remove duplicates
-            title.toLowerCase().includes(value.toLowerCase()),
+         .map((offer) => offer.title)
+         .filter(
+            (title, index, self) =>
+               self.indexOf(title) === index && // Remove duplicates
+               title.toLowerCase().includes(value.toLowerCase()),
          )
          .slice(0, 5); // Limit to 5 suggestions
    }, [offers, value, type]);
