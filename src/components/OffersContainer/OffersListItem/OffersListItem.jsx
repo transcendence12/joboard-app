@@ -43,7 +43,7 @@ export const OffersListItem = ({ offer }) => {
    return (
       <li className={styles.container}>
          <div className={styles.offerImage}>
-            <img 
+            <img
                src={offer.image || fallbackImage}
                alt={`${offer.companyName} logo`}
                onError={handleImageError}
@@ -65,7 +65,8 @@ export const OffersListItem = ({ offer }) => {
                <span className={styles.offerSeniorityLevel}>{offer.seniority}</span>
                <span className={styles.borderDecorationSpan}></span>
                <span className={styles.offerSalary}>
-                  {formatSalary(offer.salaryFrom)} - {formatSalary(offer.salaryTo)} {offer.currency} net
+                  {formatSalary(offer.salaryFrom)} - {formatSalary(offer.salaryTo)} {offer.currency}{' '}
+                  net
                </span>
             </div>
          </div>
