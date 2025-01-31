@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import styles from './Input.module.scss';
 import { SearchIcon } from '../../Icons/SearchIcon';
 import { LocationIcon } from '../../Icons/LocationIcon';
@@ -12,28 +12,26 @@ export const Input = ({
    setValue,
 }) => {
    const [showSuggestions, setShowSuggestions] = useState(false);
-   const [suggestions, setSuggestions] = useState([]);
    const inputRef = useRef(null);
+
+   // Memoize suggestions calculation
+   const suggestions = useMemo(() => {
+      if (!value || type !== 'search') return [];
+      
+      return offers
+         .map(offer => offer.title)
+         .filter((title, index, self) => 
+            self.indexOf(title) === index && // Remove duplicates
+            title.toLowerCase().includes(value.toLowerCase()),
+         )
+         .slice(0, 5); // Limit to 5 suggestions
+   }, [offers, value, type]);
 
    const handleInputChange = (e) => {
       const inputValue = e.target.value;
       setValue(inputValue);
-
-      if (type === 'search') {
-         // Get unique job titles that match the input
-         const matchingSuggestions = offers
-            .map((offer) => offer.title)
-            .filter(
-               (title, index, self) =>
-                  self.indexOf(title) === index && // Remove duplicates
-                  title.toLowerCase().includes(inputValue.toLowerCase()),
-            )
-            .slice(0, 5); // Limit to 5 suggestions
-
-         setSuggestions(matchingSuggestions);
-         setShowSuggestions(inputValue.length > 0);
-         onSearchChange?.(inputValue);
-      }
+      setShowSuggestions(inputValue.length > 0);
+      onSearchChange?.(inputValue);
    };
 
    const handleSuggestionClick = (suggestion) => {
@@ -69,7 +67,7 @@ export const Input = ({
                {type === 'search' ? <SearchIcon /> : <LocationIcon />}
             </div>
          </div>
-         {showSuggestions && type === 'search' && suggestions.length > 0 && (
+         {showSuggestions && suggestions.length > 0 && (
             <div className={styles.dropdownResults}>
                {suggestions.map((suggestion, index) => (
                   <div

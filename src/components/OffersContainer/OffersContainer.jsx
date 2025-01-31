@@ -13,24 +13,27 @@ export const OffersContainer = () => {
    const [isLoading, setIsLoading] = useState(true);
    const [error, setError] = useState(null);
 
-   const filterOffers = useCallback((search) => {
-      let filtered = offers;
+   const filterOffers = useCallback(
+      (search) => {
+         let filtered = offers;
 
-      if (search) {
-         filtered = filtered.filter((offer) =>
-            offer.title.toLowerCase().includes(search.toLowerCase()),
-         );
-      }
+         if (search) {
+            filtered = filtered.filter((offer) =>
+               offer.title.toLowerCase().includes(search.toLowerCase()),
+            );
+         }
 
-      // if (location) {
-      //    filtered = filtered.filter(offer =>
-      //       offer.city.toLowerCase().includes(location.toLowerCase()) ||
-      //       offer.country.toLowerCase().includes(location.toLowerCase())
-      //    );
-      // }
+         // if (location) {
+         //    filtered = filtered.filter(offer =>
+         //       offer.city.toLowerCase().includes(location.toLowerCase()) ||
+         //       offer.country.toLowerCase().includes(location.toLowerCase())
+         //    );
+         // }
 
-      setFilteredOffers(filtered);
-   }, [offers]);
+         setFilteredOffers(filtered);
+      },
+      [offers],
+   );
 
    // Debounce the filter function with 300ms delay
    const debouncedFilterOffers = useDebounce(filterOffers, 300);

@@ -12,4 +12,4 @@ export const useDebounce = (func, delay) => {
       })(),
       [func, delay],
    );
-}; 
+};
