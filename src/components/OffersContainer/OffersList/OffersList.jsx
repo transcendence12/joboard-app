@@ -20,13 +20,13 @@ export const OffersList = () => {
             if (!response.ok) {
                const errorData = await response.json().catch(() => null);
                throw new Error(
-                  errorData?.message || 
-                  `HTTP error! status: ${response.status} - ${response.statusText}`
+                  errorData?.message ||
+                     `HTTP error! status: ${response.status} - ${response.statusText}`,
                );
             }
 
             const data = await response.json();
-            
+
             if (!Array.isArray(data)) {
                throw new Error('Invalid data format received from server');
             }
@@ -50,16 +50,14 @@ export const OffersList = () => {
                <p>Loading offers...</p>
             </div>
          )}
-         
+
          {error && (
             <div className={styles.errorContainer}>
                <p>Error: {error}</p>
-               <button onClick={() => window.location.reload()}>
-                  Try Again
-               </button>
+               <button onClick={() => window.location.reload()}>Try Again</button>
             </div>
          )}
-         
+
          {!isLoading && !error && (
             <div className={styles.container}>
                <p className={styles.offersTotalCount}>
