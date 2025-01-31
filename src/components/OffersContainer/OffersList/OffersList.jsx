@@ -1,47 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import * as styles from './OffersList.module.scss';
 import { OffersListItem } from '../OffersListItem/OffersListItem';
-import { API_CONFIG } from '../../../config/api';
 
-export const OffersList = () => {
-   const [offers, setOffers] = useState([]);
+export const OffersList = ({ offers }) => {
    const [isLoading, setIsLoading] = useState(true);
    const [error, setError] = useState(null);
 
    useEffect(() => {
-      const fetchJobs = async () => {
-         try {
-            const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.OFFERS}`, {
-               headers: {
-                  'Content-Type': 'application/json',
-               },
-            });
-
-            if (!response.ok) {
-               const errorData = await response.json().catch(() => null);
-               throw new Error(
-                  errorData?.message ||
-                     `HTTP error! status: ${response.status} - ${response.statusText}`,
-               );
-            }
-
-            const data = await response.json();
-
-            if (!Array.isArray(data)) {
-               throw new Error('Invalid data format received from server');
-            }
-
-            setOffers(data);
-         } catch (error) {
-            console.error('Error fetching offers:', error);
-            setError(error.message || 'Failed to fetch offers');
-         } finally {
-            setIsLoading(false);
-         }
-      };
-
-      fetchJobs();
-   }, []);
+      // Since offers are now passed as props, we just need to handle loading state
+      setIsLoading(false);
+   }, [offers]);
 
    return (
       <>
@@ -54,7 +22,7 @@ export const OffersList = () => {
          {error && (
             <div className={styles.errorContainer}>
                <p>Error: {error}</p>
-               <button onClick={() => window.location.reload()}>Try Again</button>
+               {/* <button onClick={() => window.location.reload()}>Try Again</button> */}
             </div>
          )}
 

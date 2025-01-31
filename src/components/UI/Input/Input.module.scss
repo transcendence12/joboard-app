@@ -1,0 +1,93 @@
+.inputContainer {
+   position: relative;
+   width: 100%;
+   max-width: 432.5px;
+}
+
+.inputWrapper {
+   width: 100%;
+   height: 50px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   background: var(--White);
+   border-radius: 5px;
+   border: 1px solid var(--Gray-light);
+   padding: 6.25px 10px 6.25px 24px;
+   gap: 41px;
+   box-shadow: 0px 0px 4px 0px rgba(149, 100, 212, 0.4);
+}
+
+.iconWrapper {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 30px;
+   height: 30px;
+   flex-shrink: 0;
+   cursor: pointer;
+
+   svg {
+      width: 30px;
+      height: 30px;
+      color: var(--Gray-dark);
+   }
+}
+
+.searchInput {
+   flex: 1;
+   height: 37.5px;
+   background-color: transparent;
+   border: none;
+   outline: none;
+   color: var(--Gray-dark);
+   font-family: Poppins;
+   font-size: 14px;
+   font-weight: 500;
+   line-height: 100%;
+   width: 287px;
+
+   &::placeholder {
+      color: var(--Gray-dark);
+   }
+
+   &:focus {
+      outline: none;
+   }
+}
+
+.dropdownResults {
+   position: absolute;
+   top: 100%;
+   left: 0;
+   right: 0;
+   background: var(--White);
+   border-radius: 0 0 5px 5px;
+   border: 1px solid var(--Gray-light);
+   border-top: none;
+   max-height: 300px;
+   overflow-y: auto;
+   z-index: 10;
+   margin-top: 4px;
+   box-shadow: 0px 0px 4px 0px rgba(149, 100, 212, 0.4);
+   text-align: left;
+}
+
+.suggestionItem {
+   padding: 12px 24px;
+   cursor: pointer;
+   color: var(--Gray-dark);
+   font-size: 14px;
+   text-align: left;
+   font-family: Poppins;
+   font-weight: 400;
+
+   &:hover {
+      background-color: var(--Gray-lightest);
+   }
+}
+
+// When input is focused and there are results
+.inputWrapper:focus-within + .dropdownResults {
+   // display: block; // Will be controlled by state in the future
+}
