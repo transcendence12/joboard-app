@@ -1,12 +1,13 @@
 import React from 'react';
 import * as styles from './OffersListItem.module.scss';
+import fallbackImage from '../../../assets/image-placeholder.png';
 
 const formatTimeAgo = (dateString) => {
    const now = new Date();
    const past = new Date(dateString);
    const diffTime = Math.abs(now - past);
    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-   
+
    if (diffDays === 0) {
       const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
       if (diffHours === 0) {
@@ -30,32 +31,45 @@ const formatTimeAgo = (dateString) => {
    }
 };
 
-export const OffersListItem = ({ offer }) => (
-   <li className={styles.container}>
-      <div className={styles.offerImage}>
-         <div className={styles.offerImagePlaceholder}>
-            <img src={offer.image} alt={offer.title} />
-         </div>
-      </div>
-      <div className={styles.offerInfo}>
-         <p className={styles.offerTitle}>{offer.title}</p>
+const formatSalary = (amount) => {
+   return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+};
 
-         <div className={styles.offerInfoBottom}>
-            <span className={styles.offerCompanyName}>{offer.companyName}</span>
-            <span className={styles.borderDecorationSpan}></span>
-            <span className={styles.offerLocation}>{offer.city} {offer.country}</span>
-            <span className={styles.borderDecorationSpan}></span>
-            <span className={styles.offerContractType}>{offer.jobType}</span>
-            <span className={styles.borderDecorationSpan}></span>
-            <span className={styles.offerSeniorityLevel}>{offer.seniority}</span>
-            <span className={styles.borderDecorationSpan}></span>
-            <span className={styles.offerSalary}>
-               {offer.salaryFrom} - {offer.salaryTo} {offer.currency} net
-            </span>
+export const OffersListItem = ({ offer }) => {
+   const handleImageError = (e) => {
+      e.target.src = fallbackImage;
+   };
+
+   return (
+      <li className={styles.container}>
+         <div className={styles.offerImage}>
+            <img 
+               src={offer.image || fallbackImage}
+               alt={`${offer.companyName} logo`}
+               onError={handleImageError}
+               className={styles.offerImageContent}
+            />
          </div>
-      </div>
-      <div className={styles.offerPublishedDateInfo}>
-         {formatTimeAgo(offer.createdAt)}
-      </div>
-   </li>
-);
+         <div className={styles.offerInfo}>
+            <p className={styles.offerTitle}>{offer.title}</p>
+
+            <div className={styles.offerInfoBottom}>
+               <span className={styles.offerCompanyName}>{offer.companyName}</span>
+               <span className={styles.borderDecorationSpan}></span>
+               <span className={styles.offerLocation}>
+                  {offer.city} {offer.country}
+               </span>
+               <span className={styles.borderDecorationSpan}></span>
+               <span className={styles.offerContractType}>{offer.jobType}</span>
+               <span className={styles.borderDecorationSpan}></span>
+               <span className={styles.offerSeniorityLevel}>{offer.seniority}</span>
+               <span className={styles.borderDecorationSpan}></span>
+               <span className={styles.offerSalary}>
+                  {formatSalary(offer.salaryFrom)} - {formatSalary(offer.salaryTo)} {offer.currency} net
+               </span>
+            </div>
+         </div>
+         <div className={styles.offerPublishedDateInfo}>{formatTimeAgo(offer.createdAt)}</div>
+      </li>
+   );
+};
