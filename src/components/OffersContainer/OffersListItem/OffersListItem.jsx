@@ -57,7 +57,7 @@ export const OffersListItem = ({ offer }) => {
                <span className={styles.offerCompanyName}>{offer.companyName}</span>
                <span className={styles.borderDecorationSpan}></span>
                <span className={styles.offerLocation}>
-                  {offer.city} {offer.country}
+                  {offer.city}, {offer.country}
                </span>
                <span className={styles.borderDecorationSpan}></span>
                <span className={styles.offerContractType}>{offer.jobType}</span>
