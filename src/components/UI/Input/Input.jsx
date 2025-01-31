@@ -71,6 +71,10 @@ export const Input = ({
       setShowSuggestions(false);
       setSelectedIndex(-1);
       onSearchChange?.(suggestion);
+      // Blur the input after selection to improve UX:
+      // 1. Removes focus from input after selection
+      // 2. Closes mobile keyboard on touch devices
+      // 3. Allows user to immediately see the filtered results
       inputRef.current?.blur();
    };
 
